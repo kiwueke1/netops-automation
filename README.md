@@ -1,16 +1,17 @@
 # Network Configuration Automation Toolkit for CiscoXR and Juniper
-##Overview
+## Overview
+
 This toolkit is designed for automating the generation and deployment of network configurations for CiscoXR and Juniper devices. It leverages Jinja templates for configuration syntax, YAML files for variables, and Python scripts for processing and deployment.
 
-##Structure and Components
+## Structure and Components
 The codebase is organized into several directories, each serving a specific purpose:
 
-###1. startup_configs
+### 1. startup_configs
 Contains the final configuration files for network devices. These configurations are generated and stored here by the toolkit.
 
-####ciscoxr: Configurations for CiscoXR devices.
-####juniper: Configurations for Juniper devices.
-###2. yaml_files
+#### ciscoxr: Configurations for CiscoXR devices.
+#### juniper: Configurations for Juniper devices.
+### 2. yaml_files
 Holds YAML files that define variables for generating configurations. Each YAML file corresponds to a specific network device.
 
 ciscoxr: Variable files for CiscoXR devices.
