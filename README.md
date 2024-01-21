@@ -16,23 +16,23 @@ Holds YAML files that define variables for generating configurations. Each YAML 
 
 ciscoxr: Variable files for CiscoXR devices.
 juniper: Variable files for Juniper devices.
-3. jinja_templates
+### 3. jinja_templates
 Contains Jinja templates that define the structure and syntax of network configurations.
 
 ciscoxr: Templates for CiscoXR devices.
 juniper: Templates for Juniper devices.
-4. config_generators
+### 4. config_generators
 Python scripts that generate device configurations by rendering Jinja templates with variables from YAML files.
 
-ciscoxr: Scripts for CiscoXR configurations.
-juniper: Scripts for Juniper configurations.
-5. config_push_scripts
+#### ciscoxr: Scripts for CiscoXR configurations.
+#### juniper: Scripts for Juniper configurations.
+### 5. config_push_scripts
 Scripts and tools for deploying configurations to network devices. The config_push.py in each device's folder is the main script to be run by the user.
 
-ciscoxr: Deployment scripts for CiscoXR.
-juniper: Deployment scripts for Juniper.
-device_mapping.py: Maps device names to their respective IP addresses.
-Usage Instructions
+#### ciscoxr: Deployment scripts for CiscoXR.
+#### juniper: Deployment scripts for Juniper.
+### device_mapping.py: Maps device names to their respective IP addresses.
+## Usage Instructions
 To generate and deploy configurations for a specific device:
 
 Run config_push.py:
@@ -51,5 +51,48 @@ Customization and Extension
 Jinja Templates: Modify or add new templates in jinja_templates for different configuration structures.
 YAML Variables: Update or add new YAML files in yaml_files for different devices.
 Adding New Devices: Update device_mapping.py with new device names and IP addresses.
-Troubleshooting and Logs
+## Troubleshooting and Logs
 Check session_output.log in config_push_scripts for logs of configuration deployment.
+
+## Directory structure 
+ciscoxr_juniper/
+│
+├── startup_configs/
+│   ├── ciscoxr/
+│   │   └── [CiscoXR Configuration Files]
+│   └── juniper/
+│       └── [Juniper Configuration Files]
+│
+├── yaml_files/
+│   ├── ciscoxr/
+│   │   └── [CiscoXR YAML Variable Files]
+│   └── juniper/
+│       └── [Juniper YAML Variable Files]
+│
+├── jinja_templates/
+│   ├── ciscoxr/
+│   │   └── [CiscoXR Jinja Templates]
+│   └── juniper/
+│       └── [Juniper Jinja Templates]
+│
+├── config_generators/
+│   ├── ciscoxr/
+│   │   └── [Python Scripts for CiscoXR Config Generation]
+│   └── juniper/
+│       └── [Python Scripts for Juniper Config Generation]
+│
+└── config_push_scripts/
+    ├── ciscoxr/
+    │   ├── config_push.py
+    │   ├── device_mapping.py
+    │   └── [Other CiscoXR Deployment Scripts]
+    └── juniper/
+        ├── config_push.py
+        ├── device_mapping.py
+        └── [Other Juniper Deployment Scripts]
+
+
+## Prerequisites 
+- Python 3.x
+- Required Python libraries: jinja2, pyyaml, netmiko
+- Junos PyEZ
