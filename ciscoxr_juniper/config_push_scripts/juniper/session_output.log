@@ -1,0 +1,21 @@
+Last login: Thu Jan 18 04:11:48 2024 from 192.168.122.1
+--- JUNOS 18.2R1.9 Kernel 64-bit  JNPR-11.0-20180614.6c3f819_buil
+
+kez@sfo_bb1> 
+
+kez@sfo_bb1> 
+
+kez@sfo_bb1> set cli screen-width 511 
+Screen width set to 511
+
+kez@sfo_bb1> set cli complete-on-space off 
+Disabling complete-on-space
+
+kez@sfo_bb1> set cli screen-length 0 
+Screen length set to 0
+
+kez@sfo_bb1> 
+
+kez@sfo_bb1> 
+
+kez@sfo_bb1> 

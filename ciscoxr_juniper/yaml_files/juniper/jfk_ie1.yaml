@@ -1,0 +1,119 @@
+device:
+  host_name: jfk_ie1
+  version: "18.2R1.9"
+  login:
+    user:
+      - name: kez
+        uid: 2000
+        class: super-user
+        authentication:
+          encrypted_password: "$6$Q.oo1Sc1$LlTCt66W/ca.rsVy6FskdLcwbLoPndki0zJlq6H51xeDfgzRfW.jBtet./9WWVaR7ZL1Qd6uzcJuLoZ4aqHTO0"
+  root_authentication:
+    encrypted_password: "$6$HVoCNZ4Q$w9s96mQR40000tbwh0/tALwJFEJ4bXRdj9gatmJdCBtU.u5RZXXuVCh5Yvk2oT0HbEZNgHS5dmusVGdV02DfZ1"
+
+  interfaces:
+    - name: ge-0/0/0
+      unit: 0
+      ip_address: 192.168.122.81
+      subnet_mask: 24
+      description: "to management network"
+
+    - name: ge-0/0/1
+      unit: 0
+      ip_address: 10.4.1.2
+      subnet_mask: 30
+      description: "to jfk_bb1"
+
+    - name: ge-0/0/4
+      unit: 0
+      ip_address: 10.1.1.14
+      subnet_mask: 30
+      description: "available"
+
+    - name: ge-0/0/3
+      unit: 0
+      ip_address: 10.1.1.22
+      subnet_mask: 30
+      description: "available"
+
+    - name: ge-0/0/2
+      ip_address: 10.5.1.2
+      subnet_mask: 30  
+      unit: 0
+      description: "to yyz_pe1"
+    - name: lo0
+      ip_address: 3.3.3.3
+      subnet_mask: 32
+      unit: 1
+   
+routing:
+  ospf:
+    areas:
+      - area: 10
+        interfaces:
+          - ge-0/0/1.0
+          - lo0.1
+      - area: 50
+        interfaces:
+          - ge-0/0/2.0
+    virtual_link:
+      neighbor_id: "1.1.1.1"
+      transit_area: "0.0.0.10"
+  bgp:
+    autonomous_system: 65123
+    router_id: "3.3.3.3"
+    peer_groups:
+      - name: "ibgp-peers"
+        type: "internal"
+        local_address: "3.3.3.3"
+        address_family: "inet unicast"
+        neighbors:
+          - neighbor_ip: "1.1.1.1"
+            remote_as: 65123
+            description: "bgp peering with jfk_bb1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration: "inbound"
+          - neighbor_ip: "2.2.2.2"
+            remote_as: 65123
+            description: "bgp peering with sfo_bb1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration: "inbound"
+          - neighbor_ip: "8.8.8.8"
+            remote_as: 65123
+            description: "bgp peering with sfo_pe1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration: "inbound"
+          - neighbor_ip: "5.5.5.5"
+            remote_as: 65123
+            description: "bgp peering with los_bb1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration: "inbound"
+          - neighbor_ip: "6.6.6.6"
+            remote_as: 65123
+            description: "bgp peering with lhr_pe1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration: "inbound"
+          - neighbor_ip: "7.7.7.7"
+            remote_as: 65123
+            description: "bgp peering with los_ie1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration: "inbound"                
+      - name: "cust-peers"
+        type: "external"
+        local_address: "3.3.3.3"
+        address_family: "inet unicast"
+        neighbors:
+          - neighbor_ip: "9.9.9.9"
+            remote_as: 65124
+            description: "bgp peering with yyz_pe1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration: "inbound"
+    networks:
+      - network_prefix: "10.0.0.0/8"

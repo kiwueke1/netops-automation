@@ -1,0 +1,17 @@
+set policy-options policy-statement BGP-EXPORT term 1 from protocol direct
+set routing-options router-id {{ bgp.router_id }}
+set routing-options autonomous-system {{ bgp.autonomous_system }}
+{% for peer_group in bgp.peer_groups %}
+set protocols bgp group {{ peer_group.name }} local-address {{ bgp.router_id }}
+set protocols bgp group {{ peer_group.name }} type {{ peer_group.type}}
+{% for neighbor in peer_group.neighbors %}
+set protocols bgp group {{ peer_group.name }} neighbor {{ neighbor.neighbor_ip }} peer-as {{ neighbor.remote_as }}
+set protocols bgp group {{ peer_group.name }} neighbor {{ neighbor.neighbor_ip }} family inet unicast
+{% if peer_group.type == 'external' %}
+set protocols bgp group {{ peer_group.name }} neighbor {{ neighbor.neighbor_ip }} multihop ttl 1
+{% endif %}
+{% if neighbor.description %}
+set protocols bgp group {{ peer_group.name }} neighbor {{ neighbor.neighbor_ip }} description "{{ neighbor.description }}"
+{% endif %}
+{% endfor %}
+{% endfor %}

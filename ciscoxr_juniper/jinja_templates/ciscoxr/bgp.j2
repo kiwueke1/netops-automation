@@ -1,0 +1,47 @@
+no router bgp
+commit
+
+prefix-set MGMT-NETWORK
+  192.168.122.0/24
+end-set
+!
+{#TO-DO: edit ADVERTISED-ROUTES policy to match more specific routes inste#}
+route-policy ADVERTISED-ROUTES
+  if destination in MGMT-NETWORK then
+    drop
+  else
+    pass
+  endif
+end-policy
+!
+
+commit
+
+router bgp {{ bgp.autonomous_system }}
+  bgp router-id {{ bgp.router_id }}
+  address-family ipv4 unicast
+   redistribute connected
+{% for network in bgp.networks %}
+   network {{ network.network_prefix }}
+{% endfor %}
+{% for peer_group in bgp.peer_groups %}
+neighbor-group {{ peer_group.name }}
+update-source loopback 0
+{% for neighbor in peer_group.neighbors %}
+neighbor {{ neighbor.neighbor_ip }}
+ remote-as {{ neighbor.remote_as }}
+ use neighbor-group {{ peer_group.name }}
+ address-family ipv4 unicast
+ route-policy ADVERTISED-ROUTES in
+ route-policy ADVERTISED-ROUTES out
+{% if peer_group.type == "external" %}
+  ebgp-multihop
+{% endif %}
+  use neighbor-group {{ peer_group.name }}
+
+{% if neighbor.description %}
+  description {{ neighbor.description }}
+{% endif %}
+{% endfor %}
+{% endfor %}
+commit

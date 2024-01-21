@@ -1,0 +1,8 @@
+{% for area in ospf.areas -%}
+    {% for interface in area.interfaces -%}
+set protocols ospf area {{ area.area }} interface {{ interface }}
+    {% endfor -%}
+{% endfor %}
+{%- if 'virtual_link' in ospf -%}
+set protocols ospf area 0 virtual-link neighbor-id {{ ospf.virtual_link.neighbor_id }} transit-area {{ ospf.virtual_link.transit_area }}
+{%- endif -%}

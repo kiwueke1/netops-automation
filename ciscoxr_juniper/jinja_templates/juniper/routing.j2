@@ -1,0 +1,50 @@
+routing-options {
+    router-id {{ routing.bgp.router_id }};
+    autonomous-system {{ routing.bgp.autonomous_system }};
+}
+
+protocols {
+    bgp {
+        {% for peer_group in routing.bgp.peer_groups %}
+        group {{ peer_group.name }} {
+            type {{ peer_group.type }};
+            local-address {{ peer_group.local_address }};
+            import CONNECTED;
+            export CONNECTED;            
+            {% for neighbor in peer_group.neighbors %}
+            neighbor {{ neighbor.neighbor_ip }} {
+                description "{{ neighbor.description }}";
+                family inet {
+                    unicast;
+                }
+                peer-as {{ neighbor.remote_as }};
+                import CONNECTED;
+                export CONNECTED;                
+            }
+            {% endfor %}
+        }
+        {% endfor %}
+    }
+
+    ospf {
+        {% for area in routing.ospf.areas %}
+        area {{ area.area }} {
+            {% for interface in area.interfaces %}
+            interface {{ interface }};
+            {% endfor %}
+        }
+        {% endfor %}
+    }
+}
+
+policy-options {
+    policy-statement CONNECTED {
+        term 1 {
+            from {
+                protocol direct;
+                route-filter 0.0.0.0/0 orlonger;
+            }
+            then accept;
+        }
+    }
+}

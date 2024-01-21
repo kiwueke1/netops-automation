@@ -1,0 +1,15 @@
+hostname {{ device.hostname }}
+{% for interface in device.interfaces %}
+interface {{ interface.name }}
+{% if interface.shutdown %}  shutdown{% endif %}
+{% if interface.ipv4_address %}
+ ipv4 address {{ interface.ipv4_address }} {{ interface.subnet_mask }}
+{% endif %}
+{% if interface.description %}
+ description {{ interface.description }}
+{% endif %}
+{% endfor %}
+ssh server v2
+ssh server vrf {{ device.ssh.vrf }}
+ssh server netconf vrf {{ device.ssh.vrf }}
+commit

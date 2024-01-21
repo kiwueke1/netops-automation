@@ -1,0 +1,11 @@
+router ospf {{ ospf.process_id }}
+{% for area in ospf.areas %}
+ area {{ area.area }}
+ {% for iface in area.interfaces %}
+  interface {{ iface }}
+ {% endfor %}
+{% endfor %}
+commit
+exit
+exit
+exit

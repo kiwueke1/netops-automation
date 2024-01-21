@@ -1,0 +1,59 @@
+version 18.2R1.9;
+system {
+    login {
+{% for user in device.login.user %}
+        user {{ user.name }} {
+            uid {{ user.uid }};
+            class {{ user.class }};
+            authentication {
+                encrypted-password {{ user.authentication.encrypted_password }}; ## SECRET-DATA
+            }
+        }
+    }
+    root-authentication {
+        encrypted-password {{ user.authentication.encrypted_password }}; ## SECRET-DATA
+    }
+{% endfor %}
+    host-name {{ device.host_name }};
+    services {
+        ssh {
+            protocol-version v2;
+        }
+        netconf {
+            ssh;
+        }
+    }
+    syslog {
+        inactive: user * {
+            any emergency;
+        }
+        file messages {
+            any notice;
+            authorization info;
+        }
+        file interactive-commands {
+            interactive-commands any;
+        }
+    }
+    processes {
+        dhcp-service {
+            traceoptions {
+                file dhcp_logfile size 10m;
+                level all;
+                flag packet;
+            }
+        }
+    }
+}
+{% for interface in interfaces %}
+interfaces {
+    {{ interface.name }} {
+        description {{ itnerface.description }};
+        unit {{ interface.unit }} {
+            family inet {
+                address {{ interface.ip_address }}/{{ interface.subnet_mask }};
+            }
+        }
+    }
+}
+{% endfor %}

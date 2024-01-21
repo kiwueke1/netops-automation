@@ -1,0 +1,93 @@
+device:
+  hostname: lhr_pe1
+
+  interfaces:
+    - name: Loopback0
+      ipv4_address: "6.6.6.6"
+      subnet_mask: "255.255.255.255"
+
+    - name: Loopback10
+      ipv4_address: "10.20.3.1"
+      subnet_mask: "255.255.255.0"
+
+    - name: MgmtEth0/0/CPU0/0
+      shutdown: true
+
+    - name: GigabitEthernet0/0/0/0
+      description: "to management network"
+      ipv4_address: "192.168.122.82"
+      subnet_mask: "255.255.255.0"
+
+    - name: GigabitEthernet0/0/0/1
+      description: "to sfo_bb1"
+      ipv4_address: "10.2.1.1"
+      subnet_mask: "255.255.255.252"
+
+    - name: GigabitEthernet0/0/0/2
+      description: "AVAILABLE"
+
+    - name: GigabitEthernet0/0/0/3
+      description: "AVAILABLE"
+
+    - name: GigabitEthernet0/0/0/4
+      description: "AVAILABLE"
+
+  ospf:
+    process_id: 1
+    areas:
+      - area: 30
+        interfaces:
+          - Loopback0
+          - GigabitEthernet0/0/0/1
+
+  ssh:
+    v2: true
+    vrf: default
+
+  bgp:
+    autonomous_system: 65123
+    router_id: "6.6.6.6"
+    peer_groups:
+      - name: "igbp-peers"
+        type: "internal"
+        local_address: "{{ bgp.router_id }}"
+        address_family: "inet unicast"
+        neighbors:
+          - neighbor_ip: "4.4.4.4"
+            remote_as: 65123
+            description: "bgp peering with los_bb1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration: "inbound"
+          - neighbor_ip: "2.2.2.2"
+            remote_as: 65123
+            description: "bgp peering with sfo_bb1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration: "inbound"
+          - neighbor_ip: "4.4.4.4"
+            remote_as: 65123
+            description: "bgp peering with lhr_bb1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration: "inbound"
+          - neighbor_ip: "1.1.1.1"
+            remote_as: 65123
+            description: "bgp peering with jfk_bb1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration: "inbound"
+          - neighbor_ip: "7.7.7.7"
+            remote_as: 65123
+            description: "bgp peering with los_ie1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration:"inbound"
+          - neighbor_ip: "3.3.3.3"
+            remote_as: 65123
+            description: "bgp peering with sfo_ie1"
+            address_family:
+              ipv4_unicast:
+                soft_reconfiguration:"inbound"                   
+    networks:
+      - network_prefix: "10.20.3.0/24"

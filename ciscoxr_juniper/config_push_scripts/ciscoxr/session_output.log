@@ -1,0 +1,241 @@
+
+
+RP/0/0/CPU0:sfo_pe1#
+
+RP/0/0/CPU0:sfo_pe1#terminal width 511
+
+Sat Jan 20 05:20:31.529 UTC
+RP/0/0/CPU0:sfo_pe1#terminal length 0
+
+Sat Jan 20 05:20:31.629 UTC
+RP/0/0/CPU0:sfo_pe1#
+
+RP/0/0/CPU0:sfo_pe1#
+
+RP/0/0/CPU0:sfo_pe1#configure terminal
+
+Sat Jan 20 05:20:32.239 UTC
+RP/0/0/CPU0:sfo_pe1(config)#
+
+RP/0/0/CPU0:sfo_pe1(config)#hostname sfo_pe1
+
+RP/0/0/CPU0:sfo_pe1(config)#interface Loopback0
+
+RP/0/0/CPU0:sfo_pe1(config-if)#ipv4 address 8.8.8.8 255.255.255.255
+
+RP/0/0/CPU0:sfo_pe1(config-if)#interface Loopback10
+
+RP/0/0/CPU0:sfo_pe1(config-if)#ipv4 address 10.20.5.1 255.255.255.0
+
+RP/0/0/CPU0:sfo_pe1(config-if)#interface MgmtEth0/0/CPU0/0
+
+RP/0/0/CPU0:sfo_pe1(config-if)#shutdown
+
+RP/0/0/CPU0:sfo_pe1(config-if)#interface GigabitEthernet0/0/0/0
+
+RP/0/0/CPU0:sfo_pe1(config-if)#ipv4 address 192.168.122.84 255.255.255.0
+
+RP/0/0/CPU0:sfo_pe1(config-if)#description to management network
+
+RP/0/0/CPU0:sfo_pe1(config-if)#interface GigabitEthernet0/0/0/1
+
+RP/0/0/CPU0:sfo_pe1(config-if)#ipv4 address 10.3.1.2 255.255.255.252
+
+RP/0/0/CPU0:sfo_pe1(config-if)#description to sfo_bb1
+
+RP/0/0/CPU0:sfo_pe1(config-if)#interface GigabitEthernet0/0/0/2
+
+RP/0/0/CPU0:sfo_pe1(config-if)#description AVAILABLE
+
+RP/0/0/CPU0:sfo_pe1(config-if)#interface GigabitEthernet0/0/0/3
+
+RP/0/0/CPU0:sfo_pe1(config-if)#description AVAILABLE
+
+RP/0/0/CPU0:sfo_pe1(config-if)#interface GigabitEthernet0/0/0/4
+
+RP/0/0/CPU0:sfo_pe1(config-if)#description AVAILABLE
+
+RP/0/0/CPU0:sfo_pe1(config-if)#ssh server v2
+
+RP/0/0/CPU0:sfo_pe1(config)#ssh server vrf default
+
+RP/0/0/CPU0:sfo_pe1(config)#ssh server netconf vrf default
+
+RP/0/0/CPU0:sfo_pe1(config)#commit
+
+Sat Jan 20 05:20:38.358 UTC
+RP/0/0/CPU0:sfo_pe1(config)#router ospf 1
+
+RP/0/0/CPU0:sfo_pe1(config-ospf)# area 20
+
+RP/0/0/CPU0:sfo_pe1(config-ospf-ar)#  interface Loopback0
+
+RP/0/0/CPU0:sfo_pe1(config-ospf-ar-if)#  interface GigabitEthernet0/0/0/1
+
+RP/0/0/CPU0:sfo_pe1(config-ospf-ar-if)#commit
+
+Sat Jan 20 05:20:40.358 UTC
+RP/0/0/CPU0:sfo_pe1(config-ospf-ar-if)#exit
+
+RP/0/0/CPU0:sfo_pe1(config-ospf-ar)#exit
+
+RP/0/0/CPU0:sfo_pe1(config-ospf)#exit
+
+RP/0/0/CPU0:sfo_pe1(config)#no router bgp
+
+RP/0/0/CPU0:sfo_pe1(config)#commit
+
+Sat Jan 20 05:20:41.848 UTC
+RP/0/0/CPU0:sfo_pe1(config)#prefix-set MGMT-NETWORK
+
+Sat Jan 20 05:20:42.298 UTC
+% WARNING: Policy object prefix-set MGMT-NETWORK' exists! Reconfiguring it via CLI will replace current definition. Use 'abort to cancel.
+RP/0/0/CPU0:sfo_pe1(config-pfx)#  192.168.122.0/24
+
+RP/0/0/CPU0:sfo_pe1(config-pfx)#end-set
+
+RP/0/0/CPU0:sfo_pe1(config)#!
+
+RP/0/0/CPU0:sfo_pe1(config)#route-policy ADVERTISED-ROUTES
+
+Sat Jan 20 05:20:43.468 UTC
+% WARNING: Policy object route-policy ADVERTISED-ROUTES' exists! Reconfiguring it via CLI will replace current definition. Use 'abort to cancel.
+RP/0/0/CPU0:sfo_pe1(config-rpl)#  if destination in MGMT-NETWORK then
+
+RP/0/0/CPU0:sfo_pe1(config-rpl-if)#    drop
+
+RP/0/0/CPU0:sfo_pe1(config-rpl-if)#  else
+
+RP/0/0/CPU0:sfo_pe1(config-rpl-else)#    pass
+
+RP/0/0/CPU0:sfo_pe1(config-rpl-else)#  endif
+
+RP/0/0/CPU0:sfo_pe1(config-rpl)#end-policy
+
+RP/0/0/CPU0:sfo_pe1(config)#!
+
+RP/0/0/CPU0:sfo_pe1(config)#commit
+
+Sat Jan 20 05:20:44.228 UTC
+RP/0/0/CPU0:sfo_pe1(config)#router bgp 65123
+
+RP/0/0/CPU0:sfo_pe1(config-bgp)#  bgp router-id 8.8.8.8
+
+RP/0/0/CPU0:sfo_pe1(config-bgp)#  address-family ipv4 unicast
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-af)#   redistribute connected
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-af)#   network 10.20.5.0/24
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-af)#neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbrgrp)#update-source loopback 0
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbrgrp)#neighbor 2.2.2.2
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# remote-as 65123
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# address-family ipv4 unicast
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES in
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES out
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)#  use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#  description bgp peering with los_bb1
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#neighbor 2.2.2.2
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# remote-as 65123
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# address-family ipv4 unicast
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES in
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES out
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)#  use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#  description bgp peering with sfo_bb1
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#neighbor 4.4.4.4
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# remote-as 65123
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# address-family ipv4 unicast
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES in
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES out
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)#  use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#  description bgp peering with lhr_bb1
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#neighbor 1.1.1.1
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# remote-as 65123
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# address-family ipv4 unicast
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES in
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES out
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)#  use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#  description bgp peering with jfk_bb1
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#neighbor 7.7.7.7
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# remote-as 65123
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# address-family ipv4 unicast
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES in
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES out
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)#  use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#  description bgp peering with los_ie1
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#neighbor 3.3.3.3
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# remote-as 65123
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)# address-family ipv4 unicast
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES in
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)# route-policy ADVERTISED-ROUTES out
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr-af)#  use neighbor-group ibgp-peers
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#  description bgp peering with sfo_ie1
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#commit
+
+Sat Jan 20 05:20:51.637 UTC
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#
+
+RP/0/0/CPU0:sfo_pe1(config-bgp-nbr)#end
+
+RP/0/0/CPU0:sfo_pe1#
+
+RP/0/0/CPU0:sfo_pe1#exit
