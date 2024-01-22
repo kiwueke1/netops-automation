@@ -1,6 +1,6 @@
 # Network Configuration Automation Toolkit for CiscoXR and Juniper
 ##### Author: Kezie I 
-*** still under development ***
+*** this repository is still under development ***
 ## Overview
 
 This toolkit is designed for automating the generation and deployment of network configurations for CiscoXR and Juniper devices. It leverages Jinja templates for configuration syntax, YAML files for variables, and Python scripts for processing and deployment.
